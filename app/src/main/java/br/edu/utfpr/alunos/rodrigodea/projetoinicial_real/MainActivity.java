@@ -53,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                pessoasComAulas(Banco.arrayListAula.get(position).getData());
+                Banco banco = Banco.getBanco(MainActivity.this);
+
+                pessoasComAulas(banco.aulaDao().queryForAll().get(position).getData());
 
             }
         });

@@ -25,6 +25,6 @@ public interface PlanoDao {
     @Query("SELECT * FROM planos WHERE id = :id")
     Plano queryForId(long id);
 
-    @Query("SELECT * FROM planos ORDER BY nome ASC")
+    @Query("SELECT * FROM planos ORDER BY id ASC")
     List<Plano> queryForAll();
 }

@@ -35,4 +35,11 @@
     <string name="itemExcluido">Item Deleted</string>
     <string name="semMudanca">No Changes</string>
     <string name="preco">Price:</string>
+    <string name="aviso">Alert</string>
+    <string name="ok">OK</string>
+    <string name="confirmacao">Confirmation</string>
+    <string name="sim">Yes</string>
+    <string name="nao">No</string>
+    <string name="deseja_apagar">Do you really want to delete?</string>
+    <string name="deseja_atualizar">Do you really wanna update?</string>
 </resources>

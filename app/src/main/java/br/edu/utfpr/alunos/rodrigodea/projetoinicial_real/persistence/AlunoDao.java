@@ -25,6 +25,6 @@ public interface AlunoDao {
     @Query("SELECT * FROM alunos WHERE id = :id")
     Aluno queryForId(long id);
 
-    @Query("SELECT * FROM alunos ORDER BY nome ASC")
+    @Query("SELECT * FROM alunos ORDER BY id ASC")
     List<Aluno> queryForAll();
 }

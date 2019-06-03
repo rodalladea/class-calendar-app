@@ -1,5 +1,6 @@
 package br.edu.utfpr.alunos.rodrigodea.projetoinicial_real;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,8 +14,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.persistence.Banco;
+import java.util.List;
+
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Plano;
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.persistence.Banco;
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.utils.GUIUtils;
 
 public class ManagementPlanoActivity extends AppCompatActivity {
 
@@ -27,6 +31,8 @@ public class ManagementPlanoActivity extends AppCompatActivity {
 
     private int selecionado = -1;
     private ArrayAdapter<Plano> arrayAdapterPlano;
+    private List<Plano> listPlano;
+    private Plano plano = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +57,12 @@ public class ManagementPlanoActivity extends AppCompatActivity {
                 selecionado = position;
                 buttonAddPlano.setText(R.string.atualizar);
 
-                editTextNome.setText(Banco.arrayListPlano.get(position).getNome());
-                editTextIntervalo.setText(String.valueOf(Banco.arrayListPlano.get(position).getIntervalo()));
-                editTextQuantidade.setText(String.valueOf(Banco.arrayListPlano.get(position).getQuantidade()));
-                editTextPreco.setText(String.valueOf(Banco.arrayListPlano.get(position).getValor()));
+                Plano plano = (Plano) parent.getItemAtPosition(position);
+
+                editTextNome.setText(plano.getNome());
+                editTextIntervalo.setText(String.valueOf(plano.getIntervalo()));
+                editTextQuantidade.setText(String.valueOf(plano.getQuantidade()));
+                editTextPreco.setText(String.valueOf(plano.getValor()));
             }
         });
 
@@ -76,18 +84,44 @@ public class ManagementPlanoActivity extends AppCompatActivity {
             case R.id.itemExcluiManagement:
 
                 if (selecionado != -1) {
-                    Banco.arrayListPlano.remove(selecionado);
-                    arrayAdapterPlano.notifyDataSetChanged();
-                    selecionado = -1;
+                    String mensagem = getString(R.string.deseja_apagar)
+                            + "\n" + plano.getNome();
 
-                    editTextNome.setText(null);
-                    editTextIntervalo.setText(null);
-                    editTextQuantidade.setText(null);
-                    editTextPreco.setText(null);
+                    DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch(which){
+                                case DialogInterface.BUTTON_POSITIVE:
 
-                    buttonAddPlano.setText(R.string.adicionar);
+                                    Banco banco = Banco.getBanco(ManagementPlanoActivity.this);
 
-                    Toast.makeText(this, getString(R.string.itemExcluido), Toast.LENGTH_LONG).show();
+                                    banco.planoDao().delete(plano);
+                                    listPlano.remove(plano);
+                                    plano = null;
+
+                                    arrayAdapterPlano.notifyDataSetChanged();
+                                    selecionado = -1;
+
+                                    editTextNome.setText(null);
+                                    editTextIntervalo.setText(null);
+                                    editTextQuantidade.setText(null);
+                                    editTextPreco.setText(null);
+
+                                    buttonAddPlano.setText(R.string.adicionar);
+
+                                    Toast.makeText(ManagementPlanoActivity.this,
+                                            getString(R.string.itemExcluido), Toast.LENGTH_LONG).show();
+
+                                    break;
+                                case DialogInterface.BUTTON_NEGATIVE:
+
+                                    break;
+                            }
+                        }
+                    };
+
+                    GUIUtils.confirmaAcao(this, mensagem, listener);
+
                 }
 
                 return true;
@@ -100,36 +134,81 @@ public class ManagementPlanoActivity extends AppCompatActivity {
 
     private void popularPlanos() {
         //descobrir um sort para a lista
+        Banco banco = Banco.getBanco(ManagementPlanoActivity.this);
+        listPlano = banco.planoDao().queryForAll();
 
-        arrayAdapterPlano = new ArrayAdapter<Plano>(this, android.R.layout.simple_list_item_1, Banco.arrayListPlano);
+        arrayAdapterPlano = new ArrayAdapter<Plano>(this, android.R.layout.simple_list_item_1, listPlano);
 
         listViewPlano.setAdapter(arrayAdapterPlano);
     }
 
     public void addPlanoToList(View view) {
-        Plano plano = new Plano();
-        String toast = getString(R.string.itemAdicionado);
 
+        final Banco banco = Banco.getBanco(ManagementPlanoActivity.this);
+
+        final Plano plano = new Plano();
+
+        if (this.plano != null) {
+            plano.setId(this.plano.getId());
+        }
         plano.setNome(editTextNome.getText().toString());
         plano.setIntervalo(Integer.parseInt(editTextIntervalo.getText().toString()));
         plano.setQuantidade(Integer.parseInt(editTextQuantidade.getText().toString()));
         plano.setValor(Double.parseDouble(editTextPreco.getText().toString()));
 
         if (buttonAddPlano.getText().equals(getString(R.string.atualizar))) {
-            Banco.arrayListPlano.remove(selecionado);
+            String mensagem = getString(R.string.deseja_atualizar)
+                    + "\n" + plano.getNome();
+
+            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    switch(which){
+                        case DialogInterface.BUTTON_POSITIVE:
+
+                            banco.planoDao().update(plano);
+                            listPlano = banco.planoDao().queryForAll();
+
+                            arrayAdapterPlano.notifyDataSetChanged();
+                            buttonAddPlano.setText(R.string.adicionar);
+
+                            editTextNome.setText(null);
+                            editTextIntervalo.setText(null);
+                            editTextQuantidade.setText(null);
+                            editTextPreco.setText(null);
+
+                            Toast.makeText(ManagementPlanoActivity.this,
+                                    getString(R.string.itemAtualizado), Toast.LENGTH_LONG).show();
+
+                            selecionado = -1;
+                            ManagementPlanoActivity.this.plano = null;
+
+                            break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+
+                            break;
+                    }
+                }
+            };
+
+            GUIUtils.confirmaAcao(this, mensagem, listener);
+
+
+        } else {
+
+            banco.planoDao().insert(plano);
+            listPlano = banco.planoDao().queryForAll();
             arrayAdapterPlano.notifyDataSetChanged();
-            buttonAddPlano.setText(R.string.adicionar);
-            toast = getString(R.string.itemAtualizado);
+
+            editTextNome.setText(null);
+            editTextIntervalo.setText(null);
+            editTextQuantidade.setText(null);
+            editTextPreco.setText(null);
+
+            Toast.makeText(ManagementPlanoActivity.this,
+                    getString(R.string.itemAdicionado), Toast.LENGTH_LONG).show();
         }
 
-        Banco.arrayListPlano.add(plano);
-        arrayAdapterPlano.notifyDataSetChanged();
-
-        editTextNome.setText(null);
-        editTextIntervalo.setText(null);
-        editTextQuantidade.setText(null);
-        editTextPreco.setText(null);
-
-        Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
     }
 }

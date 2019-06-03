@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Calendário de Aulas</string>
+    <string name="newClass">Nova Aula</string>
+    <string name="topic">Matéria</string>
+    <string name="paid">Pago</string>
+    <string name="selectDate">Selecione a Data</string>
+    <string name="selectTime">Seleciona a Hora</string>
+    <string name="aluno">Aluno</string>
+    <string name="plan">Plano</string>
+    <string name="adicionar">Adicionar</string>
+    <string name="gerenciarAluno">Gerenciar Aluno</string>
+    <string name="gerenciarPlano">Gerenciar Plano</string>
+    <string name="temaEscuro">Tema Escuro</string>
+    <string name="informacao">Informação</string>
+    <string name="nomePlano">Nome do Plano</string>
+    <string name="intervalo">Intervalo</string>
+    <string name="quantidade">Quantidade de Aulas</string>
+    <string name="precoTotal">Preço Total</string>
+    <string name="nomeAluno">Nome do Aluno</string>
+    <string name="enderecoAluno">Endereço</string>
+    <string name="idAluno">CPF</string>
+    <string name="tituloActivityAlunosNoDia">"Aulas - "</string>
+    <string name="atualizar">Atualizar</string>
+    <string name="confirmarAulaAlt">Confirmar</string>
+    <string name="excluir">Excluir</string>
+    <string name="descricaoApp">O \"Class Calendar\" é um aplicativo que ajuda aos professores que dão aula particular a administrar suas aulas quanto na questão de data, horário e se a aula já foi paga</string>
+    <string name="tituloComoFunciona">Como funciona</string>
+    <string name="explicaTelaInicial">"    Na tela inicial tem um botão principal que tem a funcionalidade de acrescentar novas aulas, porém é necessário se ter alunos e planos cadastrados. Para cadastrar eles é preciso acessar o menu encontrado no ícone com três pontos na parte superior direita, ali é possível ter acesso ao gerenciamento de alunos e de planos."</string>
+    <string name="explicaTelasGerenciamento">"    Nas telas de gerenciamento de alunos e planos o sistema funciona da mesma forma, os campos devem ser preenchidos para insersão dos dados, uma lista vai sendo incrementada abaixo e ao clicar em um item, os dados aparecerão nos campos e você poderá edita-los, para confirmar a edição precisa clicar no botão novamente que agora funcionará como uma atulização. Na parte superior direita existe um ícone com a imagem de um lixo, ele tem a função de excluir um item da lista quando o mesmo estiver selecionado."</string>
+    <string name="descricaoListaDias">"    Voltando para a tela inicial, terá uma lista com itens abaixo do botão para inserir novas aulas, essa lista exibirá as datas com aulas marcadas. Ao clicar em uma data será exibido as aulas relacionando o nome do aluno com o horário da aula. Se clicar em uma dessas aulas, será exibido os detalhes da mesma, onde poderá ser alterado cada campo. Para atualizar é necessário selecionar o botão de atualização e para excluir precisa somente selecionar o ícone de lixeira na parte superior direita."</string>
+    <string name="autor">Criado por: Rodrigo Dalla Dea</string>
+    <string name="versao">Esta é uma versão inicial</string>
+    <string name="itemAdicionado">Item Adicionado</string>
+    <string name="itemAtualizado">Item Atualizado</string>
+    <string name="itemExcluido">Item Excluido</string>
+    <string name="semMudanca">Sem Mudanças</string>
+    <string name="preco">Preço:</string>
+</resources>

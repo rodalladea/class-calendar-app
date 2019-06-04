@@ -1,15 +1,22 @@
 package br.edu.utfpr.alunos.rodrigodea.projetoinicial_real;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,19 +25,70 @@ import java.util.List;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aluno;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aula;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.persistence.Banco;
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.utils.GUIUtils;
 
 public class ClassInADayActivity extends AppCompatActivity {
 
     private ListView listViewAlunoDia;
     private ArrayAdapter<Aula> arrayAdapterAlunoDia;
+    private Aula aula;
 
     private String data;
     public static String ID = "ID";
     public static String NOME = "NOME";
     public static String HORA = "HORA";
 
-    private static ArrayList<Aula> listAlunosDia = new ArrayList<>();
+    private static List<Aula> listAlunosDia = new ArrayList<>();
     private static List<Aluno> listAlunoForClass = new ArrayList<>();
+
+    private ActionMode actionMode;
+    private int posicao = -1;
+    private View viewSelecionada;
+
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.class_opcoes, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
+
+            switch (menuItem.getItemId()) {
+                case R.id.classOpcoesAtualizar:
+                    atualizar(posicao);
+                    mode.finish();
+                    return true;
+
+                case R.id.classOpcoesExcluir:
+                    excluir(aula);
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            if (viewSelecionada != null) {
+                viewSelecionada.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            actionMode = null;
+            viewSelecionada = null;
+
+            listViewAlunoDia.setEnabled(true);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,17 +113,31 @@ public class ClassInADayActivity extends AppCompatActivity {
         listViewAlunoDia.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Banco banco = Banco.getBanco(ClassInADayActivity.this);
+                atualizar(position);
+            }
+        });
 
-                Intent intentAluno = new Intent(getApplicationContext(), DetailsClassActivity.class);
+        listViewAlunoDia.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        listViewAlunoDia.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (actionMode != null) {
+                    return false;
+                }
 
-                intentAluno.putExtra(ID, String.valueOf(listAlunosDia.get(position).getId()));
-                intentAluno.putExtra(NOME, banco.alunoDao().queryForId(listAlunosDia.get(position).getAluno()).getNome());
-                intentAluno.putExtra(HORA, dateFormat.format(listAlunosDia.get(position).getData()));
+                posicao = position;
+                aula = (Aula) parent.getItemAtPosition(position);
 
-                startActivity(intentAluno);
+                view.setBackgroundColor(Color.LTGRAY);
+
+                viewSelecionada = view;
+
+                listViewAlunoDia.setEnabled(false);
+
+                actionMode = startSupportActionMode(mActionModeCallback);
+
+                return true;
             }
         });
 
@@ -117,4 +189,52 @@ public class ClassInADayActivity extends AppCompatActivity {
     }
 
 
+    public void atualizar(int position) {
+        Banco banco = Banco.getBanco(ClassInADayActivity.this);
+
+        Intent intentAluno = new Intent(getApplicationContext(), DetailsClassActivity.class);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+
+        intentAluno.putExtra(ID, String.valueOf(listAlunosDia.get(position).getId()));
+        intentAluno.putExtra(NOME, banco.alunoDao().queryForId(listAlunosDia.get(position).getAluno()).getNome());
+        intentAluno.putExtra(HORA, dateFormat.format(listAlunosDia.get(position).getData()));
+
+        startActivity(intentAluno);
+    }
+
+    public void excluir(final Aula aula) {
+
+        final Banco banco = Banco.getBanco(ClassInADayActivity.this);
+
+        String mensagem = getString(R.string.deseja_apagar)
+                + "\n" + banco.alunoDao().queryForId(aula.getAluno()) + " - " + aula.getData().toString();
+
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                switch(which){
+                    case DialogInterface.BUTTON_POSITIVE:
+
+                        banco.aulaDao().delete(aula);
+                        listAlunosDia.remove(aula);
+
+                        arrayAdapterAlunoDia.notifyDataSetChanged();
+
+                        Toast.makeText(ClassInADayActivity.this,
+                                getString(R.string.itemExcluido), Toast.LENGTH_LONG).show();
+
+                        finish();
+
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+
+                        break;
+                }
+            }
+        };
+
+        GUIUtils.confirmaAcao(this, mensagem, listener);
+    }
 }

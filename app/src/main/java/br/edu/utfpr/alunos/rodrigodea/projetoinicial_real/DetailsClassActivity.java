@@ -147,8 +147,10 @@ public class DetailsClassActivity extends AppCompatActivity {
 
             case R.id.itemExcluiManagement:
 
+                final Banco banco = Banco.getBanco(DetailsClassActivity.this);
+
                 String mensagem = getString(R.string.deseja_apagar)
-                        + "\n" + aula.getAluno() + " - " + aula.getData().toString();
+                        + "\n" + banco.alunoDao().queryForId(aula.getAluno()) + " - " + aula.getData().toString();
 
                 DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                     @Override
@@ -156,8 +158,6 @@ public class DetailsClassActivity extends AppCompatActivity {
 
                         switch(which){
                             case DialogInterface.BUTTON_POSITIVE:
-
-                                Banco banco = Banco.getBanco(DetailsClassActivity.this);
 
                                 banco.aulaDao().delete(aula);
 
@@ -175,8 +175,6 @@ public class DetailsClassActivity extends AppCompatActivity {
                 };
 
                 GUIUtils.confirmaAcao(this, mensagem, listener);
-
-
 
                 return true;
 

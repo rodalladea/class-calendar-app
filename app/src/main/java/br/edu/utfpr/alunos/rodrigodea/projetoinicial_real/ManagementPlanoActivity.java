@@ -42,7 +42,7 @@ public class ManagementPlanoActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
         editTextNome = findViewById(R.id.editTextNomePlano);
         editTextIntervalo = findViewById(R.id.editTextIntervalo);
@@ -57,7 +57,7 @@ public class ManagementPlanoActivity extends AppCompatActivity {
                 selecionado = position;
                 buttonAddPlano.setText(R.string.atualizar);
 
-                Plano plano = (Plano) parent.getItemAtPosition(position);
+                plano = (Plano) parent.getItemAtPosition(position);
 
                 editTextNome.setText(plano.getNome());
                 editTextIntervalo.setText(String.valueOf(plano.getIntervalo()));
@@ -168,7 +168,8 @@ public class ManagementPlanoActivity extends AppCompatActivity {
                         case DialogInterface.BUTTON_POSITIVE:
 
                             banco.planoDao().update(plano);
-                            listPlano = banco.planoDao().queryForAll();
+                            listPlano.remove(selecionado);
+                            listPlano.add(selecionado, plano);
 
                             arrayAdapterPlano.notifyDataSetChanged();
                             buttonAddPlano.setText(R.string.adicionar);
@@ -198,7 +199,7 @@ public class ManagementPlanoActivity extends AppCompatActivity {
         } else {
 
             banco.planoDao().insert(plano);
-            listPlano = banco.planoDao().queryForAll();
+            listPlano.add(plano);
             arrayAdapterPlano.notifyDataSetChanged();
 
             editTextNome.setText(null);

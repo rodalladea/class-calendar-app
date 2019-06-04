@@ -1,0 +1,185 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "2a06ccfd1defafb418add77e3009ebea",
+    "entities": [
+      {
+        "tableName": "alunos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nome` TEXT, `cpf` TEXT, `endereco` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nome",
+            "columnName": "nome",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cpf",
+            "columnName": "cpf",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "endereco",
+            "columnName": "endereco",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "aulas",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data` INTEGER, `materia` TEXT, `pago` INTEGER NOT NULL, `aluno` INTEGER NOT NULL, `plano` INTEGER NOT NULL, FOREIGN KEY(`aluno`) REFERENCES `alunos`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`plano`) REFERENCES `planos`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "data",
+            "columnName": "data",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "materia",
+            "columnName": "materia",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pago",
+            "columnName": "pago",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "aluno",
+            "columnName": "aluno",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plano",
+            "columnName": "plano",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_aulas_aluno",
+            "unique": false,
+            "columnNames": [
+              "aluno"
+            ],
+            "createSql": "CREATE  INDEX `index_aulas_aluno` ON `${TABLE_NAME}` (`aluno`)"
+          },
+          {
+            "name": "index_aulas_plano",
+            "unique": false,
+            "columnNames": [
+              "plano"
+            ],
+            "createSql": "CREATE  INDEX `index_aulas_plano` ON `${TABLE_NAME}` (`plano`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "alunos",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "aluno"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "planos",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "plano"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "planos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nome` TEXT, `intervalo` INTEGER NOT NULL, `valor` REAL NOT NULL, `quantidade` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nome",
+            "columnName": "nome",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "intervalo",
+            "columnName": "intervalo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "valor",
+            "columnName": "valor",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantidade",
+            "columnName": "quantidade",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2a06ccfd1defafb418add77e3009ebea\")"
+    ]
+  }
+}

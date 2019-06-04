@@ -164,7 +164,8 @@ public class ManagementAlunoActivity extends AppCompatActivity {
                         case DialogInterface.BUTTON_POSITIVE:
 
                             banco.alunoDao().update(aluno);
-                            listAluno = banco.alunoDao().queryForAll();
+                            listAluno.remove(selecionado);
+                            listAluno.add(selecionado, aluno);
 
                             arrayAdapterAluno.notifyDataSetChanged();
                             buttonAddAluno.setText(R.string.adicionar);
@@ -193,7 +194,7 @@ public class ManagementAlunoActivity extends AppCompatActivity {
         } else {
 
             banco.alunoDao().insert(aluno);
-            listAluno = banco.alunoDao().queryForAll();
+            listAluno.add(aluno);
             arrayAdapterAluno.notifyDataSetChanged();
 
             editTextNome.setText(null);

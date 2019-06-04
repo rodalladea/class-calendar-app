@@ -18,7 +18,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aula;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.persistence.Banco;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout layout;
 
     private ArrayAdapter<Aula> arrayAdapterAula;
+    public static List<Aula> listAula = new ArrayList<>();
 
     public static String DATA = "DATA";
     public static String ARQUIVO = "br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.PREFERENCIA";
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        arrayAdapterAula.notifyDataSetChanged();
+        popularDatas();
     }
 
     @Override
@@ -180,8 +183,29 @@ public class MainActivity extends AppCompatActivity {
     public void popularDatas() {
         //descobrir um sort para a lista
         //deixar com que quando tenha duas ou mais aulas no mesmo dia exiba somente uma vez a data
+        Banco banco = Banco.getBanco(MainActivity.this);
+        List<Aula> listAux = banco.aulaDao().queryForAll();
+        listAula = new ArrayList<>();
 
-        arrayAdapterAula = new ArrayAdapter<Aula>(this, android.R.layout.simple_list_item_1, Banco.arrayListAula) {
+        SimpleDateFormat dateF = new SimpleDateFormat("dd/MM/yyyy");
+
+        for (int i = 0; i < listAux.size(); i++) {
+            if (listAula.isEmpty()) {
+                listAula.add(listAux.get(i));
+            } else {
+                int aux = 0;
+                for (int j = 0; j < listAula.size(); j++) {
+                    if (dateF.format(listAula.get(j).getData()).equals(dateF.format(listAux.get(i).getData()))) {
+                        aux++;
+                    }
+                }
+                if (aux == 0) {
+                    listAula.add(listAux.get(i));
+                }
+            }
+        }
+
+        arrayAdapterAula = new ArrayAdapter<Aula>(this, android.R.layout.simple_list_item_1, listAula) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -189,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
                 TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                text1.setText(dateFormat.format(Banco.arrayListAula.get(position).getData()));
+                text1.setText(dateFormat.format(listAula.get(position).getData()));
 
                 return view;
             }

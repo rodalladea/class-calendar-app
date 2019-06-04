@@ -2,6 +2,7 @@ package br.edu.utfpr.alunos.rodrigodea.projetoinicial_real;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -25,7 +26,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aula;
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Plano;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.persistence.Banco;
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.utils.GUIUtils;
 
 public class DetailsClassActivity extends AppCompatActivity {
 
@@ -42,7 +45,6 @@ public class DetailsClassActivity extends AppCompatActivity {
     DatePickerDialog dpd;
     TimePickerDialog tpd;
     Aula aula = null;
-    int aulaAntiga = 0;
 
     private String hora;
     private String nome;
@@ -144,10 +146,37 @@ public class DetailsClassActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.itemExcluiManagement:
-                Banco.arrayListAula.remove(aulaAntiga);
-                finish();
 
-                Toast.makeText(this, getString(R.string.itemExcluido), Toast.LENGTH_LONG).show();
+                String mensagem = getString(R.string.deseja_apagar)
+                        + "\n" + aula.getAluno() + " - " + aula.getData().toString();
+
+                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        switch(which){
+                            case DialogInterface.BUTTON_POSITIVE:
+
+                                Banco banco = Banco.getBanco(DetailsClassActivity.this);
+
+                                banco.aulaDao().delete(aula);
+
+                                Toast.makeText(DetailsClassActivity.this,
+                                        getString(R.string.itemExcluido), Toast.LENGTH_LONG).show();
+
+                                finish();
+
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+
+                                break;
+                        }
+                    }
+                };
+
+                GUIUtils.confirmaAcao(this, mensagem, listener);
+
+
 
                 return true;
 
@@ -157,27 +186,22 @@ public class DetailsClassActivity extends AppCompatActivity {
     }
 
     public void popularCampos() {
-        int i = 0;
 
-        for (Aula a : Banco.arrayListAula) {
-            if (a.getId() == Integer.parseInt(id)) {
-                aula = a;
-                aulaAntiga = i;
-            }
+        Banco banco = Banco.getBanco(DetailsClassActivity.this);
 
-            i++;
-        }
+        aula = banco.aulaDao().queryForId(Integer.parseInt(id));
 
         SimpleDateFormat dateFormatData = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat dateFormatHora = new SimpleDateFormat("HH:mm");
 
 
-        enderecoAula.setText(aula.getAluno().getEndereco());
+        enderecoAula.setText(banco.alunoDao().queryForId(aula.getAluno()).getEndereco());
         editTextTopic.setText(aula.getMateria());
         checkBoxPago.setChecked(aula.isPago());
         editTextData.setText(dateFormatData.format(aula.getData()));
         editTextTime.setText(dateFormatHora.format(aula.getData()));
-        textViewPrecoPagar.setText(String.valueOf(aula.getPlano().getValor()/aula.getPlano().getQuantidade()));
+        Plano plano = banco.planoDao().queryForId(aula.getPlano());
+        textViewPrecoPagar.setText(String.valueOf(plano.getValor()/plano.getQuantidade()));
 
         enderecoAula.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -220,22 +244,51 @@ public class DetailsClassActivity extends AppCompatActivity {
 
     }
 
-    public void alterarDadosAula(View view) throws ParseException {
+    public void alterarDadosAula(View view) {
 
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss");
-        Date data = format.parse(editTextData.getText().toString() + "T" + editTextTime.getText().toString() + ":00");
+        String mensagem = getString(R.string.deseja_atualizar)
+                + "\n" + aula.getAluno() + " - " + aula.getData().toString();
 
-        aula.setMateria(editTextTopic.getText().toString());
-        aula.setData(data);
-        aula.getAluno().setEndereco(enderecoAula.getText().toString());
-        aula.setPago(checkBoxPago.isChecked());
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-        Banco.arrayListAula.remove(aulaAntiga);
-        Banco.arrayListAula.add(aula);
+                switch(which){
+                    case DialogInterface.BUTTON_POSITIVE:
 
-        Toast.makeText(this, getString(R.string.itemAtualizado), Toast.LENGTH_LONG).show();
+                        Banco banco = Banco.getBanco(DetailsClassActivity.this);
 
-        finish();
+                        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss");
+                        Date data = null;
+                        try {
+                            data = format.parse(editTextData.getText().toString() + "T" +
+                                    editTextTime.getText().toString() + ":00");
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        aula.setMateria(editTextTopic.getText().toString());
+                        aula.setData(data);
+                        banco.alunoDao().queryForId(aula.getAluno()).setEndereco(enderecoAula.getText().toString());
+                        aula.setPago(checkBoxPago.isChecked());
+
+                        banco.aulaDao().update(aula);
+
+                        Toast.makeText(DetailsClassActivity.this,
+                                getString(R.string.itemAtualizado), Toast.LENGTH_LONG).show();
+
+                        finish();
+
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+
+                        break;
+                }
+            }
+        };
+
+        GUIUtils.confirmaAcao(this, mensagem, listener);
+
     }
 
     @Override

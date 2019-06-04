@@ -36,4 +36,11 @@
     <string name="itemExcluido">Item Excluido</string>
     <string name="semMudanca">Sem Mudanças</string>
     <string name="preco">Preço:</string>
+    <string name="aviso">Aviso</string>
+    <string name="ok">OK</string>
+    <string name="confirmacao">Confirmação</string>
+    <string name="sim">Sim</string>
+    <string name="nao">Não</string>
+    <string name="deseja_apagar">Você realmente quer remover?</string>
+    <string name="deseja_atualizar">Você realmente quer atualizar?</string>
 </resources>

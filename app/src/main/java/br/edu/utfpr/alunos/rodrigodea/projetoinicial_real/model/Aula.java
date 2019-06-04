@@ -5,10 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-
 
 
 @Entity (tableName = "aulas",
@@ -28,10 +25,10 @@ public class Aula {
     private boolean pago; //
 
     @ColumnInfo (index = true)
-    private Aluno aluno; //
+    private int aluno; //
 
     @ColumnInfo (index = true)
-    private Plano plano; //
+    private int plano; //
 
     public long getId() {
         return id;
@@ -65,26 +62,19 @@ public class Aula {
         this.pago = pago;
     }
 
-    public Aluno getAluno() {
+    public int getAluno() {
         return aluno;
     }
 
-    public void setAluno(Aluno aluno) {
+    public void setAluno(int aluno) {
         this.aluno = aluno;
     }
 
-    public Plano getPlano() {
+    public int getPlano() {
         return plano;
     }
 
-    public void setPlano(Plano plano) {
+    public void setPlano(int plano) {
         this.plano = plano;
-    }
-
-    @Override
-    public String toString() {
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-
-        return this.getAluno().getNome() + " - " + dateFormat.format(this.getData());
     }
 }

@@ -17,13 +17,15 @@ import android.widget.TimePicker;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aluno;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aula;
-import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.persistence.Banco;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Plano;
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.persistence.Banco;
 
 public class AddClassActivity extends AppCompatActivity {
 
@@ -40,7 +42,8 @@ public class AddClassActivity extends AppCompatActivity {
     private DatePickerDialog dpd;
     private TimePickerDialog tpd;
 
-
+    private List<Plano> listPlano = new ArrayList<>();
+    private List<Aluno> listAluno = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,15 +113,21 @@ public class AddClassActivity extends AppCompatActivity {
     }
 
     private void popularSpinners(){
+        Banco banco = Banco.getBanco(AddClassActivity.this);
 
-        ArrayAdapter<Aluno> adapterAluno = new ArrayAdapter<Aluno>(this, android.R.layout.simple_list_item_1, Banco.arrayListAluno);
-        ArrayAdapter<Plano> adapterPlano = new ArrayAdapter<Plano>(this, android.R.layout.simple_list_item_1, Banco.arrayListPlano);
+        listAluno = banco.alunoDao().queryForAll();
+        listPlano = banco.planoDao().queryForAll();
+
+        ArrayAdapter<Aluno> adapterAluno = new ArrayAdapter<Aluno>(this, android.R.layout.simple_list_item_1, listAluno);
+        ArrayAdapter<Plano> adapterPlano = new ArrayAdapter<Plano>(this, android.R.layout.simple_list_item_1, listPlano);
 
         spinnerAluno.setAdapter(adapterAluno);
         spinnerPlano.setAdapter(adapterPlano);
     }
 
     public void addClass(View view) throws ParseException {
+
+        Banco banco = Banco.getBanco(AddClassActivity.this);
 
         Plano plano;
         Date data;
@@ -131,13 +140,12 @@ public class AddClassActivity extends AppCompatActivity {
         for(int i = 0; i < plano.getQuantidade(); i++) {
             Aula aula = new Aula();
 
-            aula.setId(Banco.id);
-            Banco.id++;
             aula.setMateria(editTextTopic.getText().toString());
             aula.setData(data);
             aula.setPago(checkBoxPago.isChecked());
-            aula.setAluno((Aluno) spinnerAluno.getSelectedItem());
-            aula.setPlano(plano);
+            Aluno aluno = (Aluno) spinnerAluno.getSelectedItem();
+            aula.setAluno((int) aluno.getId());
+            aula.setPlano((int) plano.getId());
 
             calendar.setTime(data);
             calendar.add(Calendar.DATE, plano.getIntervalo());
@@ -145,7 +153,7 @@ public class AddClassActivity extends AppCompatActivity {
                 calendar.add(Calendar.DATE, 1);
             data = calendar.getTime();
 
-            Banco.arrayListAula.add(aula);
+            banco.aulaDao().insert(aula);
 
             finish();
         }

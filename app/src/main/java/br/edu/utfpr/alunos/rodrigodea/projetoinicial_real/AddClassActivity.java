@@ -140,8 +140,8 @@ public class AddClassActivity extends AppCompatActivity {
 
         plano = (Plano) spinnerPlano.getSelectedItem();
 
-        for(int i = 0; i < plano.getQuantidade(); i++) {
-            Aula aula = new Aula();
+
+        Aula aula = new Aula();
 
         String dataString = GUIUtils.validaCampoTexto(this, editTextData, R.string.dataVazia);
         if (dataString == null)
@@ -154,10 +154,11 @@ public class AddClassActivity extends AppCompatActivity {
         data = DataUtils.formatDateToDate(dataString + "T" +
                 horaString + ":00");
 
-            String materia = GUIUtils.validaCampoTexto(this, editTextTopic, R.string.materiaVazio);
-            if (materia == null)
-                return;
+        String materia = GUIUtils.validaCampoTexto(this, editTextTopic, R.string.materiaVazio);
+        if (materia == null)
+            return;
 
+        for(int i = 0; i < plano.getQuantidade(); i++) {
             aula.setMateria(materia);
             aula.setData(data);
             aula.setPago(checkBoxPago.isChecked());
@@ -172,9 +173,9 @@ public class AddClassActivity extends AppCompatActivity {
             data = calendar.getTime();
 
             banco.aulaDao().insert(aula);
-
-            finish();
         }
+
+        finish();
 
     }
 

@@ -109,6 +109,8 @@ public class ManagementPlanoActivity extends AppCompatActivity {
 
                                     buttonAddPlano.setText(R.string.adicionar);
 
+                                    popularPlanos();
+
                                     Toast.makeText(ManagementPlanoActivity.this,
                                             getString(R.string.itemExcluido), Toast.LENGTH_LONG).show();
 
@@ -205,6 +207,7 @@ public class ManagementPlanoActivity extends AppCompatActivity {
 
                             selecionado = -1;
                             ManagementPlanoActivity.this.plano = null;
+                            popularPlanos();
 
                             break;
                         case DialogInterface.BUTTON_NEGATIVE:
@@ -221,7 +224,7 @@ public class ManagementPlanoActivity extends AppCompatActivity {
 
             banco.planoDao().insert(plano);
             listPlano.add(plano);
-            arrayAdapterPlano.notifyDataSetChanged();
+            popularPlanos();
 
             editTextNome.setText(null);
             editTextIntervalo.setText(null);

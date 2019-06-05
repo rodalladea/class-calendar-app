@@ -64,12 +64,10 @@ public class ClassInADayActivity extends AppCompatActivity {
             switch (menuItem.getItemId()) {
                 case R.id.classOpcoesAtualizar:
                     atualizar(posicao);
-                    mode.finish();
                     return true;
 
                 case R.id.classOpcoesExcluir:
                     excluir(aula);
-                    mode.finish();
                     return true;
 
                 default:

@@ -17,13 +17,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aula;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.persistence.Banco;
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.utils.DataUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -167,9 +167,7 @@ public class MainActivity extends AppCompatActivity {
     public void pessoasComAulas(Date data) {
         Intent intent = new Intent(this, ClassInADayActivity.class);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
-        intent.putExtra(DATA, dateFormat.format(data));
+        intent.putExtra(DATA, DataUtils.formatDateToString(data));
 
         startActivity(intent);
     }
@@ -187,15 +185,14 @@ public class MainActivity extends AppCompatActivity {
         List<Aula> listAux = banco.aulaDao().queryForAll();
         listAula = new ArrayList<>();
 
-        SimpleDateFormat dateF = new SimpleDateFormat("dd/MM/yyyy");
-
         for (int i = 0; i < listAux.size(); i++) {
             if (listAula.isEmpty()) {
                 listAula.add(listAux.get(i));
             } else {
                 int aux = 0;
                 for (int j = 0; j < listAula.size(); j++) {
-                    if (dateF.format(listAula.get(j).getData()).equals(dateF.format(listAux.get(i).getData()))) {
+                    if (DataUtils.formatDateToString(listAula.get(j).getData())
+                            .equals(DataUtils.formatDateToString(listAux.get(i).getData()))) {
                         aux++;
                     }
                 }
@@ -212,8 +209,7 @@ public class MainActivity extends AppCompatActivity {
 
                 TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                text1.setText(dateFormat.format(listAula.get(position).getData()));
+                text1.setText(DataUtils.formatDateToString(listAula.get(position).getData()));
 
                 return view;
             }

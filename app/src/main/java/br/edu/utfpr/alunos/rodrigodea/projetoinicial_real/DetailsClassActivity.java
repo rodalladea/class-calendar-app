@@ -20,14 +20,16 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aluno;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aula;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Plano;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.persistence.Banco;
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.utils.DataUtils;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.utils.GUIUtils;
 
 public class DetailsClassActivity extends AppCompatActivity {
@@ -42,9 +44,10 @@ public class DetailsClassActivity extends AppCompatActivity {
     private Button buttonAtualizaAula;
     private TextView textViewPrecoPagar;
 
-    DatePickerDialog dpd;
-    TimePickerDialog tpd;
-    Aula aula = null;
+    private DatePickerDialog dpd;
+    private TimePickerDialog tpd;
+    private Aula aula = null;
+    private Aluno aluno = null;
 
     private String hora;
     private String nome;
@@ -150,7 +153,8 @@ public class DetailsClassActivity extends AppCompatActivity {
                 final Banco banco = Banco.getBanco(DetailsClassActivity.this);
 
                 String mensagem = getString(R.string.deseja_apagar)
-                        + "\n" + banco.alunoDao().queryForId(aula.getAluno()) + " - " + aula.getData().toString();
+                        + "\n" + banco.alunoDao().queryForId(aula.getAluno()) + " - "
+                        + DataUtils.formatDateToString(aula.getData());
 
                 DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                     @Override
@@ -188,18 +192,17 @@ public class DetailsClassActivity extends AppCompatActivity {
         Banco banco = Banco.getBanco(DetailsClassActivity.this);
 
         aula = banco.aulaDao().queryForId(Integer.parseInt(id));
+        aluno = banco.alunoDao().queryForId(aula.getAluno());
 
-        SimpleDateFormat dateFormatData = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat dateFormatHora = new SimpleDateFormat("HH:mm");
-
-
-        enderecoAula.setText(banco.alunoDao().queryForId(aula.getAluno()).getEndereco());
+        enderecoAula.setText(aluno.getEndereco());
         editTextTopic.setText(aula.getMateria());
         checkBoxPago.setChecked(aula.isPago());
-        editTextData.setText(dateFormatData.format(aula.getData()));
-        editTextTime.setText(dateFormatHora.format(aula.getData()));
+        editTextData.setText(DataUtils.formatDateToString(aula.getData()));
+        editTextTime.setText(DataUtils.formatDateToHour(aula.getData()));
         Plano plano = banco.planoDao().queryForId(aula.getPlano());
-        textViewPrecoPagar.setText(String.valueOf(plano.getValor()/plano.getQuantidade()));
+
+        DecimalFormat fmt = new DecimalFormat("0.00");
+        textViewPrecoPagar.setText(String.valueOf(fmt.format(plano.getValor()/plano.getQuantidade())));
 
         enderecoAula.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -244,8 +247,11 @@ public class DetailsClassActivity extends AppCompatActivity {
 
     public void alterarDadosAula(View view) {
 
+        final Banco banco = Banco.getBanco(DetailsClassActivity.this);
+
         String mensagem = getString(R.string.deseja_atualizar)
-                + "\n" + aula.getAluno() + " - " + aula.getData().toString();
+                + "\n" + banco.alunoDao().queryForId(aula.getAluno()).getNome() + " - "
+                + DataUtils.formatDateToString(aula.getData());
 
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
@@ -254,23 +260,44 @@ public class DetailsClassActivity extends AppCompatActivity {
                 switch(which){
                     case DialogInterface.BUTTON_POSITIVE:
 
-                        Banco banco = Banco.getBanco(DetailsClassActivity.this);
-
-                        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss");
                         Date data = null;
+
+                        String dataString = GUIUtils.validaCampoTexto(DetailsClassActivity.this, editTextData,
+                                R.string.dataVazia);
+                        if (dataString == null)
+                            return;
+
+                        String horaString = GUIUtils.validaCampoTexto(DetailsClassActivity.this, editTextTime,
+                                R.string.horaVazia);
+                        if (horaString == null)
+                            return;
+
                         try {
-                            data = format.parse(editTextData.getText().toString() + "T" +
-                                    editTextTime.getText().toString() + ":00");
+                            data = DataUtils.formatDateToDate(dataString + "T" +
+                                    horaString + ":00");
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
 
-                        aula.setMateria(editTextTopic.getText().toString());
+                        String materia = GUIUtils.validaCampoTexto(DetailsClassActivity.this, editTextTopic,
+                                R.string.materiaVazio);
+                        if (materia == null)
+                            return;
+
+                        String endereco = GUIUtils.validaCampoTexto(DetailsClassActivity.this, enderecoAula,
+                                R.string.enderecoVazio);
+                        if (endereco == null)
+                            return;
+
+                        aluno.setEndereco(endereco);
+
+                        aula.setMateria(materia);
                         aula.setData(data);
                         banco.alunoDao().queryForId(aula.getAluno()).setEndereco(enderecoAula.getText().toString());
                         aula.setPago(checkBoxPago.isChecked());
 
                         banco.aulaDao().update(aula);
+                        banco.alunoDao().update(aluno);
 
                         Toast.makeText(DetailsClassActivity.this,
                                 getString(R.string.itemAtualizado), Toast.LENGTH_LONG).show();

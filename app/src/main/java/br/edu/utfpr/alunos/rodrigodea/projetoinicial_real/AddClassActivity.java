@@ -16,16 +16,18 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aluno;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aula;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Plano;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.persistence.Banco;
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.utils.DataUtils;
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.utils.GUIUtils;
 
 public class AddClassActivity extends AppCompatActivity {
 
@@ -79,7 +81,10 @@ public class AddClassActivity extends AppCompatActivity {
 
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        editTextData.setText(dayOfMonth + "/" + (month+1) + "/" + year);
+                        if (Locale.getDefault().getLanguage().equals("en"))
+                            editTextData.setText((month+1) + "/" + dayOfMonth + "/" + year);
+                        else
+                            editTextData.setText(dayOfMonth + "/" + (month+1) + "/" + year);
                     }
 
                 }, year, month, day);
@@ -132,15 +137,28 @@ public class AddClassActivity extends AppCompatActivity {
         Plano plano;
         Date data;
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss");
 
         plano = (Plano) spinnerPlano.getSelectedItem();
-        data = format.parse(editTextData.getText().toString() + "T" + editTextTime.getText().toString() + ":00");
 
         for(int i = 0; i < plano.getQuantidade(); i++) {
             Aula aula = new Aula();
 
-            aula.setMateria(editTextTopic.getText().toString());
+        String dataString = GUIUtils.validaCampoTexto(this, editTextData, R.string.dataVazia);
+        if (dataString == null)
+            return;
+
+        String horaString = GUIUtils.validaCampoTexto(this, editTextTime, R.string.horaVazia);
+        if (horaString == null)
+            return;
+
+        data = DataUtils.formatDateToDate(dataString + "T" +
+                horaString + ":00");
+
+            String materia = GUIUtils.validaCampoTexto(this, editTextTopic, R.string.materiaVazio);
+            if (materia == null)
+                return;
+
+            aula.setMateria(materia);
             aula.setData(data);
             aula.setPago(checkBoxPago.isChecked());
             Aluno aluno = (Aluno) spinnerAluno.getSelectedItem();

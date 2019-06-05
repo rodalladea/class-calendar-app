@@ -148,9 +148,24 @@ public class ManagementAlunoActivity extends AppCompatActivity {
         if (this.aluno != null) {
             aluno.setId(this.aluno.getId());
         }
-        aluno.setNome(editTextNome.getText().toString());
-        aluno.setCpf(editTextId.getText().toString());
-        aluno.setEndereco(editTextEndereco.getText().toString());
+        String nome = GUIUtils.validaCampoTexto(this, editTextNome,
+                R.string.nomeVazio);
+        if (nome == null)
+            return;
+
+        String id = GUIUtils.validaCampoTexto(this, editTextId,
+                R.string.cpfVazio);
+        if (id == null)
+            return;
+
+        String endereco = GUIUtils.validaCampoTexto(this, editTextEndereco,
+                R.string.enderecoVazio);
+        if (endereco == null)
+            return;
+
+        aluno.setNome(nome);
+        aluno.setCpf(id);
+        aluno.setEndereco(endereco);
 
         if (buttonAddAluno.getText().equals(getString(R.string.atualizar))) {
             String mensagem = getString(R.string.deseja_atualizar)

@@ -18,13 +18,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aluno;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.model.Aula;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.persistence.Banco;
+import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.utils.DataUtils;
 import br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.utils.GUIUtils;
 
 public class ClassInADayActivity extends AppCompatActivity {
@@ -157,10 +157,9 @@ public class ClassInADayActivity extends AppCompatActivity {
 
         Banco banco = Banco.getBanco(ClassInADayActivity.this);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
         for (Aula aula : banco.aulaDao().queryForAll()) {
-            if (dateFormat.format(aula.getData()).equals(data)) {
+            if (DataUtils.formatDateToString(aula.getData()).equals(data)) {
                 listAlunosDia.add(aula);
                 listAlunoForClass.add(banco.alunoDao().queryForId(aula.getAluno()));
             }
@@ -178,8 +177,7 @@ public class ClassInADayActivity extends AppCompatActivity {
 
                 TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                text1.setText(listAlunoForClass.get(position).getNome() + " - " + dateFormat.format(listAlunosDia.get(position).getData()));
+                text1.setText(listAlunoForClass.get(position).getNome() + " - " + DataUtils.formatDateToString(listAlunosDia.get(position).getData()));
 
                 return view;
             }
@@ -194,11 +192,9 @@ public class ClassInADayActivity extends AppCompatActivity {
 
         Intent intentAluno = new Intent(getApplicationContext(), DetailsClassActivity.class);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-
         intentAluno.putExtra(ID, String.valueOf(listAlunosDia.get(position).getId()));
         intentAluno.putExtra(NOME, banco.alunoDao().queryForId(listAlunosDia.get(position).getAluno()).getNome());
-        intentAluno.putExtra(HORA, dateFormat.format(listAlunosDia.get(position).getData()));
+        intentAluno.putExtra(HORA, DataUtils.formatDateToHour(listAlunosDia.get(position).getData()));
 
         startActivity(intentAluno);
     }
@@ -208,7 +204,8 @@ public class ClassInADayActivity extends AppCompatActivity {
         final Banco banco = Banco.getBanco(ClassInADayActivity.this);
 
         String mensagem = getString(R.string.deseja_apagar)
-                + "\n" + banco.alunoDao().queryForId(aula.getAluno()) + " - " + aula.getData().toString();
+                + "\n" + banco.alunoDao().queryForId(aula.getAluno()) + " - "
+                + DataUtils.formatDateToString(aula.getData());
 
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override

@@ -42,4 +42,10 @@
     <string name="nao">No</string>
     <string name="deseja_apagar">Do you really want to delete?</string>
     <string name="deseja_atualizar">Do you really wanna update?</string>
+    <string name="materiaVazio">The topic is empty</string>
+    <string name="dataVazia">The date is empty</string>
+    <string name="horaVazia">The time is empty</string>
+    <string name="nomeVazio">The name is empty</string>
+    <string name="cpfVazio">The id is empty</string>
+    <string name="enderecoVazio">The address is empty</string>
 </resources>

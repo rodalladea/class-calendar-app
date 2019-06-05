@@ -6,21 +6,40 @@
     android:layout_height="match_parent"
     tools:context=".ManagementPlanoActivity">
 
+    <TextView
+        android:id="@+id/textViewPlanoNome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/nomePlano"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/editTextNomePlano"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/editTextNomePlano"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:ems="10"
-        android:hint="@string/nomePlano"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewPlanoNome" />
+
+    <TextView
+        android:id="@+id/textViewPlanoIntervalo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/intervalo"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/editTextIntervalo"
+        app:layout_constraintTop_toBottomOf="@+id/editTextNomePlano" />
 
     <EditText
         android:id="@+id/editTextIntervalo"
@@ -28,31 +47,49 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:ems="10"
-        android:hint="@string/intervalo"
         android:inputType="number"
         app:layout_constraintEnd_toStartOf="@+id/editTextQuantidade"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPlanoIntervalo" />
+
+    <TextView
+        android:id="@+id/textViewPlanoQuantidade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/quantidade"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/editTextQuantidade"
         app:layout_constraintTop_toBottomOf="@+id/editTextNomePlano" />
 
     <EditText
         android:id="@+id/editTextQuantidade"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:ems="10"
-        android:hint="@string/quantidade"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/editTextIntervalo"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNomePlano" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewPlanoQuantidade" />
+
+    <TextView
+        android:id="@+id/textViewPlanoPreco"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/precoTotal"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/editTextPreco"
+        app:layout_constraintTop_toBottomOf="@+id/editTextIntervalo" />
 
     <EditText
         android:id="@+id/editTextPreco"
@@ -60,15 +97,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:ems="10"
-        android:hint="@string/precoTotal"
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextIntervalo" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewPlanoPreco" />
 
     <Button
         android:id="@+id/buttonAddPlano"

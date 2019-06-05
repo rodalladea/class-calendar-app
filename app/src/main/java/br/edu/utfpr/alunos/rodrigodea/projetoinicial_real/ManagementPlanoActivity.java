@@ -151,10 +151,31 @@ public class ManagementPlanoActivity extends AppCompatActivity {
         if (this.plano != null) {
             plano.setId(this.plano.getId());
         }
-        plano.setNome(editTextNome.getText().toString());
-        plano.setIntervalo(Integer.parseInt(editTextIntervalo.getText().toString()));
-        plano.setQuantidade(Integer.parseInt(editTextQuantidade.getText().toString()));
-        plano.setValor(Double.parseDouble(editTextPreco.getText().toString()));
+
+        String nome = GUIUtils.validaCampoTexto(this, editTextNome,
+                R.string.materiaVazio);
+        if (nome == null)
+            return;
+
+        String intervalo = GUIUtils.validaCampoTexto(this, editTextIntervalo,
+                R.string.materiaVazio);
+        if (intervalo == null)
+            return;
+
+        String quantidade = GUIUtils.validaCampoTexto(this, editTextQuantidade,
+                R.string.materiaVazio);
+        if (quantidade == null)
+            return;
+
+        String valor = GUIUtils.validaCampoTexto(this, editTextPreco,
+                R.string.materiaVazio);
+        if (valor == null)
+            return;
+
+        plano.setNome(nome);
+        plano.setIntervalo(Integer.parseInt(intervalo));
+        plano.setQuantidade(Integer.parseInt(quantidade));
+        plano.setValor(Double.parseDouble(valor));
 
         if (buttonAddPlano.getText().equals(getString(R.string.atualizar))) {
             String mensagem = getString(R.string.deseja_atualizar)

@@ -43,4 +43,10 @@
     <string name="nao">Não</string>
     <string name="deseja_apagar">Você realmente quer remover?</string>
     <string name="deseja_atualizar">Você realmente quer atualizar?</string>
+    <string name="materiaVazio">A matéria esta vazia</string>
+    <string name="dataVazia">A data esta vazia</string>
+    <string name="horaVazia">A hora esta vazia</string>
+    <string name="nomeVazio">O nome esta vazio</string>
+    <string name="cpfVazio">O CPF esta vazio</string>
+    <string name="enderecoVazio">O endereço esta vazio</string>
 </resources>

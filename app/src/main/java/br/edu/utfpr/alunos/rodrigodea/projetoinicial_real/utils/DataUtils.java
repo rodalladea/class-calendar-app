@@ -1,25 +1,36 @@
 package br.edu.utfpr.alunos.rodrigodea.projetoinicial_real.utils;
 
-import android.content.Context;
-import android.os.Build;
-import android.text.format.DateFormat;
-
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public class DataUtils {
 
-    public static String formatDate(Context context, Date date) {
+    public static String formatDateToString(Date date) {
         SimpleDateFormat dateFormat;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            String pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), "MM/dd/yyyy HH:mm");
-
-            dateFormat = new SimpleDateFormat(pattern);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         } else {
-            dateFormat = (SimpleDateFormat) DateFormat.getMediumDateFormat(context);
+            dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         }
+
+        return dateFormat.format(date);
+    }
+
+    public static Date formatDateToDate(String stringData) throws ParseException {
+        SimpleDateFormat dateFormat;
+
+        dateFormat = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss");
+
+        return dateFormat.parse(stringData);
+    }
+
+    public static String formatDateToHour(Date date) {
+        SimpleDateFormat dateFormat;
+
+        dateFormat = new SimpleDateFormat("HH:mm");
 
         return dateFormat.format(date);
     }
